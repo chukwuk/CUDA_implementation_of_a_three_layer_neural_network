@@ -1945,23 +1945,77 @@ main( int argc, char* argv[ ] )
   //matrixTransposeAddBias<<< grid, threads >>>(actValuesRelu2Dev, actValuesRelu2Dev_T, numData, numberActivation2);    
 
   cudaFree( weightBiasArrayDev );
+  cudaFree( weightBiasArrayDev2 );
+  cudaFree( weightBiasArrayDev3 );
   cudaFree( xxDataDev ); 
+  cudaFree( xxDataDev_T ); 
   cudaFree( actValuesDev ); 
-  
   cudaFree( yDataDev ); 
+    
+  cudaFree(dL_dZ3_Dev);
+  cudaFree(dL_dZ2_Dev);
+  cudaFree(dL_dZ_Dev);
+  cudaFree(dL_dZ3_Dev_T);  
+  cudaFree(dL_dZ2_Dev_T);  
   
+  cudaFree(dL_dW3_Dev);
+  cudaFree(dL_dW2_Dev);
+  cudaFree(dL_dW_Dev);
+
+  cudaFree(W3_dL_dZ3_Dev);
+  cudaFree(W2_dL_dZ2_Dev);
+
+  
+  cudaFree(diff_actValuesRelu2Dev_T); 
+  cudaFree(diff_actValuesRelu2Dev);  
+  cudaFree(diff_actValuesRelu1Dev_T); 
+  cudaFree(diff_actValuesRelu1Dev); 
+  
+  cudaFree(mt_Dev);
+  cudaFree(mt2_Dev);
+  cudaFree(mt3_Dev);
+  
+
+  cudaFree(vt_Dev);
+  cudaFree(vt2_Dev);
+  cudaFree(vt3_Dev);
+  
+
+
   delete[] weightBiasArray;
-  
   delete[] weightBiasArray2;
   delete[] weightBiasArray3;
   delete[] xxData;
+  delete[] xxData_T;
   delete[] HactValues;
-  
   delete[] HactValues2;
-
   delete[] HactValues3;
-   
   delete[] dL_dZ3;
+  delete[] dL_dZ2;
+  delete[] dL_dZ;
+  delete[] dL_dZ3_T;  
+  delete[] dL_dZ2_T;  
+
+  delete[] dL_dW3;
+  delete[] dL_dW2;
+  delete[] dL_dW;
+  
+  delete[] W3_dL_dZ3;
+  delete[] W2_dL_dZ2;
+
+  delete[] diff_HactValuesRelu2_T; 
+  delete[] diff_HactValuesRelu2; 
+  delete[] diff_HactValuesRelu1_T; 
+  delete[] diff_HactValuesRelu1; 
+
+  delete[] mt;
+  delete[] mt2;
+  delete[] mt3;
+  
+
+  delete[] vt;
+  delete[] vt2;
+  delete[] vt3;
 
   return 0;
 };	
