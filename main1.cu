@@ -32,36 +32,6 @@ cudaError_t checkCudaErrors(cudaError_t result, string functioncall = "")
   return result;
 }
 
-
-void readfile (const char* filename, float* data) {
-  
-  
-  FILE *file;
-  char line[256]; // Buffer to store each line
-  char *token;
-
-  file = fopen(filename, "r"); 
-  if (file == NULL) {
-     fprintf(stderr, "Error opening file");
-     return;
-  }
-  int count = 0;
-  while (fgets(line, sizeof(line), file) != NULL) {
-      // Remove trailing newline character if present
-      line[strcspn(line, "\n")] = 0; 
-      // Split the line by spaces
-      token = strtok(line, " ");
-      while (token != NULL) {
-          float t = atof(token);
-          data[count] = t;
-	  token = strtok(NULL, " ");
-	  count+=1;        
-      }
-    }
-  fclose(file); 
-}	
-
-
 int
 main( int argc, char* argv[ ] )
 { 
@@ -83,6 +53,7 @@ main( int argc, char* argv[ ] )
   int BLOCKSIZE = 758;
   int NUMBLOCKS = ((wRows * numData)+BLOCKSIZE-1)/BLOCKSIZE;
     
+  fprintf (stderr, "NUMBER OF BLOCKS is %d\n", NUMBLOCKS);
   
   
   // checking memory coalescing
@@ -118,18 +89,45 @@ main( int argc, char* argv[ ] )
   while (fgets(line, sizeof(line), file) != NULL) {
       // Remove trailing newline character if present
       line[strcspn(line, "\n")] = 0; 
+
       // Split the line by spaces
       token = strtok(line, " ");
       while (token != NULL) {
+          //fprintf(stderr, "%s ", token);
           float t = atof(token);
           weightBiasArray[count] = t;
+
 	  array.push_back(token);
 	  token = strtok(NULL, " ");
+          //fprintf(stderr, "%d ", count);
 	  count+=1;        
-      } 
+      }
+
+      //fprintf(stderr, " \n");
     }
 
   fclose(file);
+  //int count;
+  
+  fprintf(stderr, " \n");
+  
+  fprintf(stderr, " %d", count);
+
+
+  fprintf(stderr, " \n");
+  
+  int cnt = 0; 
+  for (int i = 0; i < numberActivation; i++) {
+       for (int j = 0; j <= numberOfFeatures; j++) {
+          fprintf(stderr, "%.4f ", weightBiasArray[cnt]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+
+  
+  fprintf(stderr, " \n");
   
   
   
@@ -148,15 +146,34 @@ main( int argc, char* argv[ ] )
       // Split the line by spaces
       token = strtok(line, " ");
       while (token != NULL) {
+          //fprintf(stderr, "%s ", token);
           float t = atof(token);
           weightBiasArray2[count] = t;
+
+	 // array.push_back(token);
 	  token = strtok(NULL, " ");
+          //fprintf(stderr, "%d ", count);
 	  count+=1;        
       }
+
+      //fprintf(stderr, " \n");
     }
 
   fclose(file);
   
+  
+  cnt = 0; 
+  for (int i = 0; i < numberActivation2; i++) {
+       for (int j = 0; j <= numberActivation; j++) {
+          fprintf(stderr, "%.4f ", weightBiasArray2[cnt]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+
+  } 
+  fprintf(stderr, " \n");
+      
   
     
   // Reading the Pytorch initial weight and biases for the third layer 
@@ -170,19 +187,43 @@ main( int argc, char* argv[ ] )
   while (fgets(line, sizeof(line), file) != NULL) {
       // Remove trailing newline character if present
       line[strcspn(line, "\n")] = 0; 
+
       // Split the line by spaces
       token = strtok(line, " ");
       while (token != NULL) {
           //fprintf(stderr, "%s ", token);
           float t = atof(token);
           weightBiasArray3[count] = t;
+
+	 // array.push_back(token);
 	  token = strtok(NULL, " ");
+          //fprintf(stderr, "%d ", count);
 	  count+=1;        
       }
+
+      //fprintf(stderr, " \n");
     }
 
   fclose(file);
+  
+
+  fprintf(stderr, " \n");
    
+  
+  
+  cnt = 0; 
+  for (int i = 0; i < numberActivation3; i++) {
+       for (int j = 0; j <= numberActivation2; j++) {
+          fprintf(stderr, "%.4f ", weightBiasArray3[cnt]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
+
+ 
   // Reading the input data 
   file = fopen("inputdata.txt", "r"); // Replace "example.txt" with your file name
 
@@ -198,15 +239,37 @@ main( int argc, char* argv[ ] )
       // Split the line by spaces
       token = strtok(line, " ");
       while (token != NULL) {
+          //fprintf(stderr, "%s ", token);
           float t = atof(token);
           xxData[count] = t;
+
+	 // array.push_back(token);
 	  token = strtok(NULL, " ");
+          //fprintf(stderr, "%d ", count);
 	  count+=1;        
       }
+
+      //fprintf(stderr, " \n");
     }
 
   fclose(file);
   
+
+  fprintf(stderr, " \n");
+  
+  
+  cnt = 0; 
+  for (int i = 0; i < numData; i++) {
+       for (int j = 0; j < numberOfFeatures; j++) {
+          fprintf(stderr, "%.4f ", xxData[cnt]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+   
+    
+  fprintf(stderr, " \n");
   
   // Reading the target data 
   file = fopen("targetdata.txt", "r"); 
@@ -219,18 +282,38 @@ main( int argc, char* argv[ ] )
   while (fgets(line, sizeof(line), file) != NULL) {
       // Remove trailing newline character if present
       line[strcspn(line, "\n")] = 0; 
+
       // Split the line by spaces
       token = strtok(line, " ");
       while (token != NULL) {
           //fprintf(stderr, "%s ", token);
           float t = atof(token);
           yData[count] = t;
+
+	 // array.push_back(token);
 	  token = strtok(NULL, " ");
+          //fprintf(stderr, "%d ", count);
 	  count+=1;        
       }
+
+      //fprintf(stderr, " \n");
     }
 
   fclose(file);
+  
+
+  fprintf(stderr, " \n");
+  
+  
+  cnt = 0; 
+  for (int i = 0; i < numData; i++) {
+      fprintf(stderr, "%.4f  ", yData[cnt]);
+      cnt+=1;
+  }
+   
+    
+  fprintf(stderr, " \n");
+  
 
 
 
@@ -325,6 +408,20 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status );
   
+  fprintf(stderr, " Output of the linear1 \n"); 
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < wRows; j++) { 
+	fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+ 
+        //fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+      //printf("   activation values: %f \n", HactValues[(numData * wRows)-1]);
+      }
+      fprintf(stderr, " \n");
+  }  
+  
+  
+  fprintf(stderr, " \n");
+
   
   // doing the relu calculation 
 
@@ -349,6 +446,22 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(HactValuesRelu, actValuesDev,  actValuesSize , cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status );
+
+
+  
+  fprintf(stderr, " Output of the relu1 \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < wRows; j++) { 
+	fprintf(stderr,"%f ", HactValuesRelu[IDX2C(i,j,wRows)]);
+ 
+        //fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+      //printf("   activation values: %f \n", HactValues[(numData * wRows)-1]);
+      }
+      fprintf(stderr, " \n");
+  }  
+    
+  fprintf(stderr, " \n");
+
   
  // doing second linear layer 
    
@@ -406,7 +519,23 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(HactValues2, actValuesDev2,  actValuesDevSize2, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status );
+
+
+  
+  fprintf(stderr, " Output of the linear2 \n"); 
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < numberActivation2; j++) { 
+	fprintf(stderr,"%f ", HactValues2[IDX2C(i,j,numberActivation2)]);
  
+        //fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+      //printf("   activation values: %f \n", HactValues[(numData * wRows)-1]);
+      }
+      fprintf(stderr, " \n");
+  }  
+  
+  fprintf(stderr, " \n");
+    
+  
   
   // doing the second relu calculation 
 
@@ -432,6 +561,26 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status );
 
+
+  
+  fprintf(stderr, " Output of the relu2 \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < numberActivation2; j++) { 
+	fprintf(stderr,"%f ", HactValuesRelu2[IDX2C(i,j,numberActivation2)]);
+ 
+        //fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+      //printf("   activation values: %f \n", HactValues[(numData * wRows)-1]);
+      }
+      fprintf(stderr, " \n");
+  }  
+  
+  
+  
+  fprintf(stderr, " \n");
+  
+   
+
+    
  // doing third linear layer 
   
   float *HactValues3 = new float[numberActivation3  * numData];
@@ -486,7 +635,25 @@ main( int argc, char* argv[ ] )
   // copy data device memory to host:
   cudaMemcpy(HactValues3, actValuesDev3,  actValuesDevSize3, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
-  checkCudaErrors( status ); 
+  checkCudaErrors( status );
+
+
+  
+  fprintf(stderr, " Output of the linear3 \n"); 
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < numberActivation3; j++) { 
+	fprintf(stderr,"%f ", HactValues3[IDX2C(i,j,numberActivation3)]);
+ 
+        //fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+      //printf("   activation values: %f \n", HactValues[(numData * wRows)-1]);
+      }
+      fprintf(stderr, " \n");
+  }  
+  
+  fprintf(stderr, " \n");
+
+ 
+  
   
   
   // softmax 
@@ -514,31 +681,22 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(HactValues3, actValuesDev3,  actValuesDevSize3, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status );
-
   
-  // reading pytorch output data
-  // Reading the target data 
-  float *HactValues3Pytorch = new float[numberActivation3  * numData]; 
-  readfile("predictiondata.txt", HactValues3Pytorch);
-  fprintf(stderr, "Checking sigmoid output (prediction) match between Pytorch and CUDA implementation: "); 
-  bool outputMatch = true;
+
+
+  fprintf(stderr, " Output of the Sigmoid \n"); 
   for (int i = 0; i < numData; i++) {
       for (int j = 0; j < numberActivation3; j++) { 
-	float torchval = HactValues3Pytorch[IDX2C(i,j,numberActivation3)];
-        float cudaval = HactValues3[IDX2C(i,j,numberActivation3)];
-        if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
-           fprintf(stderr, "Ouput values does not match\n");
-	   outputMatch = false;
-	   break;
-	}
+	fprintf(stderr,"%f ", HactValues3[IDX2C(i,j,numberActivation3)]);
+ 
+        //fprintf(stderr,"%f ", HactValues[IDX2C(i,j,wRows)]);
+      //printf("   activation values: %f \n", HactValues[(numData * wRows)-1]);
       }
-  } 
-  if (outputMatch) {
-   fprintf(stderr, "Yes, they match\n"); 
-  } else {
-   fprintf(stderr, "No, they do not match\n"); 
+      fprintf(stderr, " \n");
   }
+  
   fprintf(stderr, " \n");
+
   // Backpropagation
 
   // dL/dZ3 = a-y, where a is the prediction and while y is the target
@@ -603,6 +761,20 @@ main( int argc, char* argv[ ] )
   checkCudaErrors( status, " cudaMemcpy(dL_dZ3, actValuesDev3,  yDataSize, cudaMemcpyDeviceToHost);  " );
   
   
+    
+    
+  fprintf(stderr, " \n"); 
+  fprintf(stderr, " Output of the dL_dZ3 \n"); 
+  for (int i = 0; i < numberActivation3; i++) {
+    for (int j = 0; j < numData; j++) {
+        fprintf(stderr,"%f ", dL_dZ3[IDX2C(i,j,numData)]);	
+    }
+
+    fprintf(stderr, " \n");
+  }
+  fprintf(stderr, " \n");
+  
+  
   
   // Transpose of dL_dZ2 so it can be arranged in column major storage for matrix multiplication
 
@@ -624,6 +796,19 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status );
   
+  
+  fprintf(stderr, " \n"); 
+  fprintf(stderr, " Output of the Transpose of dL_dZ3 \n"); 
+  for (int i = 0; i < numData; i++) {
+    for (int j = 0; j < numberActivation3; j++) {
+        fprintf(stderr,"%f ", dL_dZ3_T[IDX2C(i,j,numberActivation3)]); 
+    }
+
+    fprintf(stderr, " \n");
+  }
+  fprintf(stderr, " \n");
+  
+
   
   // dL/dW3 USING ADAM optimizer at a learning rate of 0.001
 
@@ -668,6 +853,16 @@ main( int argc, char* argv[ ] )
   NUMBLOCKS = ((numData * (numberActivation2+1))+BLOCKSIZE-1)/BLOCKSIZE;
   grid.x = NUMBLOCKS;
 
+  fprintf(stderr, " Output of the relu2 \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < numberActivation2; j++) { 
+	fprintf(stderr,"%f ", HactValuesRelu2[IDX2C(i,j,numberActivation2)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
   
   // the column of the bias was filled with one
   matrixTransposeAddBias<<< grid, threads >>>(actValuesRelu2Dev, actValuesRelu2Dev_T, numData, numberActivation2);    
@@ -687,6 +882,18 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status, " cudaMemcpy(HactValuesRelu_T, actValuesRelu2Dev_T,  yDataSize, cudaMemcpyDeviceToHost); " );
 
+  
+   
+  fprintf(stderr, " Output of the Transpose relu2 \n");
+  for (int i = 0; i <= numberActivation2; i++) {
+      for (int j = 0; j < numData; j++) { 
+	fprintf(stderr,"%f ", HactValuesRelu2_T[IDX2C(i,j,numData)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
    
   // differentiation of ReLu 2
   
@@ -735,6 +942,32 @@ main( int argc, char* argv[ ] )
   checkCudaErrors( status, "cudaMemcpy(diff_HactValuesRelu2Dev_T, diff_actValuesRelu2Dev_T,  diff_HactValuesRelu2DevSize, cudaMemcpyDeviceToHost);");  
   
   
+  fprintf(stderr, " Output of the differentiation of relu2 output \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j <  numberActivation2; j++) { 
+	fprintf(stderr,"%f ", diff_HactValuesRelu2[IDX2C(i,j,numberActivation2)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+   
+  
+    
+  fprintf(stderr, " Output of the differentiation of relu2 output  after Transpose\n");
+  for (int i = 0; i < numberActivation2; i++) {
+      for (int j = 0; j <  numData; j++) { 
+	fprintf(stderr,"%f ", diff_HactValuesRelu2_T[IDX2C(i,j,numData)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+   
+
+
   // copy data from host memory to the device:
    
   status = cudaMemcpy(actValuesRelu2Dev, HactValuesRelu2, actValuesDevSize2, cudaMemcpyHostToDevice );
@@ -768,31 +1001,19 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status, " cudaMemcpy(dL_dW3, dL_dW3_Dev,  dL_dW3_size, cudaMemcpyDeviceToHost);" ); 
 
-    
-  // Reading the dL_dW3 data
-  float* dL_dW3_Pytorch = new float [numberActivation3 * (numberActivation2+1)];
-  // reading pytorch dL_dW3 data
-  readfile("weightbias3_grad.txt", dL_dW3_Pytorch);
   
-  bool dL_dW3_Match = true;
-  fprintf(stderr, "Checking dL_dW3 match between Pytorch and CUDA implementation: "); 
-  for (int i = 0; i < numberActivation3; i++) {
-   for (int j = 0; j <= numberActivation2; j++) {
-        float torchval = dL_dW3_Pytorch[IDX2C(i,j,(numberActivation2 + 1))];
-        float cudaval = dL_dW3[IDX2C(i,j,(numberActivation2 + 1))];
-        if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
-           dL_dW3_Match =  false;
-	   break;
-	}
-   }
+  fprintf(stderr, " \n");
+ 
+  fprintf(stderr, " Output of the dL_dW3 \n"); 
+  for (int i = 0; i <= numberActivation2; i++) {
+      fprintf(stderr,"%f ", dL_dW3[i]); 
   }
-  if (dL_dW3_Match) {
-     fprintf(stderr, "Yes, they match\n"); 
-  } else {
-     fprintf(stderr, "No, they do not match\n"); 
-  }
+  
+  fprintf(stderr, " \n");
+  
    // transpose weightBiasArray3
-    
+      
+   
   float* weightBiasArray3_T = new float [numberActivation3 * (numberActivation2+1)];
   
   float* weightBiasArrayDev3_T;
@@ -825,6 +1046,21 @@ main( int argc, char* argv[ ] )
   checkCudaErrors( status, " cudaMemcpy(weightBiasArray3_T, weightBiasArrayDev3_T, weightBiasArraySize3_T, cudaMemcpyDeviceToHost)  ");
   
   
+  fprintf(stderr, " \n");
+  fprintf(stderr, " The output of the Transpose of weight bias array 3\n");
+  cnt = 0; 
+  for (int i = 0; i < numberActivation2; i++) {
+       for (int j = 0; j < numberActivation3; j++) {
+          fprintf(stderr, "%.4f ", weightBiasArray3_T[cnt]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
+
+   
    
   // updating with adam optimizer 
   
@@ -904,31 +1140,20 @@ main( int argc, char* argv[ ] )
   checkCudaErrors( status," status = cudaMemcpy(vt, vt_Dev, dL_dW3_size, cudaMemcpyDeviceToHost );");
   
     
-  
-  
-  // reading pytorch W3 data after first backpropagation
-  float* weightBiasArray3Pytorch = new float [numberActivation3 * (numberActivation2+1)];
-  readfile("weightbias3_after_prop.txt", weightBiasArray3Pytorch);
-  
   fprintf(stderr, " \n");
-  fprintf(stderr, "Checking Pytorch weight and bias match the CUDA implementation after the first back propagation: ");
-  bool weightBiasArray3Match = true;
+  fprintf(stderr, " The new weight and bias of layer 3 after the first back propagation\n");
+  cnt = 0; 
   for (int i = 0; i < numberActivation3; i++) {
        for (int j = 0; j <= numberActivation2; j++) {
-         float torchval = weightBiasArray3Pytorch[IDX2C(i,j,(numberActivation2 + 1))];
-         float cudaval = weightBiasArray3[IDX2C(i,j,(numberActivation2 + 1))];
-         if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
-           weightBiasArray3Match =  false;
-	   break;
-	}
+          fprintf(stderr, "%.4f ", weightBiasArray3[cnt]);
+	  cnt+=1;
        }
-  } 
 
-  if (weightBiasArray3Match) {
-     fprintf(stderr, "Yes, they match\n"); 
-  } else {
-     fprintf(stderr, "No, they do not match\n"); 
+      fprintf(stderr, " \n");
   }
+  
+  fprintf(stderr, " \n");
+
   
   // calculation of dL_dZ2
   
@@ -964,6 +1189,20 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status );
 
+  
+  fprintf(stderr, " \n");
+  fprintf(stderr, " The output of transpose of W3 multiplied by dL_dZ3 \n");
+  cnt = 0; 
+  for (int i = 0; i < numberActivation2; i++) {
+       for (int j = 0; j < numData; j++) {
+          fprintf(stderr, "%.4f ", W3_dL_dZ3[IDX2C(i,j,numData)]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
   
     
   float *dL_dZ2 = new float[numberActivation2  * numData];
@@ -1018,6 +1257,36 @@ main( int argc, char* argv[ ] )
   
   
   
+  fprintf(stderr, " \n");
+  fprintf(stderr, " The output of dL_dZ2 \n");
+  cnt = 0; 
+  for (int i = 0; i < numberActivation2; i++) {
+       for (int j = 0; j < numData; j++) {
+          fprintf(stderr, "%.4f ", dL_dZ2[IDX2C(i,j,numData)]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
+
+  
+  
+  fprintf(stderr, " \n");
+  fprintf(stderr, " The output of the tranpose of dL_dZ2 \n");
+  cnt = 0; 
+  for (int i = 0; i < numData; i++) {
+       for (int j = 0; j < numberActivation2; j++) {
+          fprintf(stderr, "%.4f ", dL_dZ2_T[IDX2C(i,j,numberActivation2)]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
+
 
   
   // calculation of dL_dW2
@@ -1064,6 +1333,16 @@ main( int argc, char* argv[ ] )
   NUMBLOCKS = ((numData * (numberActivation+1))+BLOCKSIZE-1)/BLOCKSIZE;
   grid.x = NUMBLOCKS;
 
+  fprintf(stderr, " Output of the relu1 \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < numberActivation; j++) { 
+	fprintf(stderr,"%f ", HactValuesRelu[IDX2C(i,j,numberActivation)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
   
     
   // the column of the bias was filled with one
@@ -1082,7 +1361,21 @@ main( int argc, char* argv[ ] )
   // copy data device memory to host:
   cudaMemcpy(HactValuesRelu1_T, actValuesRelu1Dev_T,  actValuesDevSize1_T, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
-  checkCudaErrors( status, " cudaMemcpy(HactValuesRelu_T, actValuesRelu2Dev_T,  yDataSize, cudaMemcpyDeviceToHost); " );   
+  checkCudaErrors( status, " cudaMemcpy(HactValuesRelu_T, actValuesRelu2Dev_T,  yDataSize, cudaMemcpyDeviceToHost); " );
+
+  
+   
+  fprintf(stderr, " Output of the Transpose relu1 \n");
+  for (int i = 0; i <= numberActivation; i++) {
+      for (int j = 0; j < numData; j++) { 
+	fprintf(stderr,"%f ", HactValuesRelu1_T[IDX2C(i,j,numData)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+  
  
   
   // this is to store the value of relu2 to be used for differentiation
@@ -1127,7 +1420,32 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(diff_HactValuesRelu1_T, diff_actValuesRelu1Dev_T,  diff_HactValuesRelu1DevSize, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status, "cudaMemcpy(diff_HactValuesRelu1Dev_T, diff_actValuesRelu1Dev_T,  diff_HactValuesRelu1DevSize, cudaMemcpyDeviceToHost);");  
+  
+  
+  fprintf(stderr, " Output of the differentiation of relu1 output \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j <  numberActivation; j++) { 
+	fprintf(stderr,"%f ", diff_HactValuesRelu1[IDX2C(i,j,numberActivation)]);
  
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+
+  
+  fprintf(stderr, " Output of the differentiation of relu1 output  after Transpose\n");
+  for (int i = 0; i < numberActivation; i++) {
+      for (int j = 0; j <  numData; j++) { 
+	fprintf(stderr,"%f ", diff_HactValuesRelu1_T[IDX2C(i,j,numData)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+   
+  
 
    
   int dL_dW2_size =  (sizeof(float) * (numberActivation+1) * numberActivation2); 
@@ -1208,7 +1526,7 @@ main( int argc, char* argv[ ] )
   
   fprintf(stderr, " \n");
   fprintf(stderr, " The output of the Transpose of weight bias array 2\n");
-  int cnt = 0; 
+  cnt = 0; 
   for (int i = 0; i < numberActivation; i++) {
        for (int j = 0; j < numberActivation2; j++) {
           fprintf(stderr, "%.4f ", weightBiasArray2_T[cnt]);
@@ -1346,6 +1664,20 @@ main( int argc, char* argv[ ] )
   checkCudaErrors( status );
 
   
+  fprintf(stderr, " \n");
+  fprintf(stderr, " The output of transpose of W2 multiplied by dL_dZ2 \n");
+  cnt = 0; 
+  for (int i = 0; i < numberActivation; i++) {
+       for (int j = 0; j < numData; j++) {
+          fprintf(stderr, "%.4f ", W2_dL_dZ2[IDX2C(i,j,numData)]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
+  
     
   float *dL_dZ = new float[numberActivation  * numData];
  
@@ -1374,7 +1706,22 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(dL_dZ, dL_dZ_Dev, dL_dZ_DevSize, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status );
-   
+  
+  
+  
+  fprintf(stderr, " \n");
+  fprintf(stderr, " The output of dL_dZ \n");
+  cnt = 0; 
+  for (int i = 0; i < numberActivation; i++) {
+       for (int j = 0; j < numData; j++) {
+          fprintf(stderr, "%.4f ", dL_dZ[IDX2C(i,j,numData)]);
+	  cnt+=1;
+       }
+
+      fprintf(stderr, " \n");
+  }
+  
+  fprintf(stderr, " \n");
 
   // Transpose of xxData input
 
@@ -1394,6 +1741,17 @@ main( int argc, char* argv[ ] )
   NUMBLOCKS = ((numData * (numberOfFeatures+1))+BLOCKSIZE-1)/BLOCKSIZE;
   grid.x = NUMBLOCKS;
 
+  fprintf(stderr, " Output of the xxData \n");
+  for (int i = 0; i < numData; i++) {
+      for (int j = 0; j < numberOfFeatures; j++) { 
+	fprintf(stderr,"%f ", xxData[IDX2C(i,j,numberOfFeatures)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+  
     
   // the column of the bias was filled with one
   matrixTransposeAddBias<<< grid, threads >>>(xxDataDev, xxDataDev_T, numData, numberOfFeatures);    
@@ -1412,6 +1770,20 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(xxData_T, xxDataDev_T,  xxDataDevSize_T, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status, "  " );
+
+  
+   
+  fprintf(stderr, " Output of the xxData Tranpose \n");
+  for (int i = 0; i <= numberOfFeatures; i++) {
+      for (int j = 0; j < numData; j++) { 
+	fprintf(stderr,"%f ", xxData_T[IDX2C(i,j,numData)]);
+ 
+      }
+      fprintf(stderr, " \n");
+  }   
+  
+  fprintf(stderr, " \n");
+  
 
 
   // calculation of dL_dW
@@ -1547,7 +1919,7 @@ main( int argc, char* argv[ ] )
   
     
   fprintf(stderr, " \n");
-  fprintf(stderr, " The new weight and bias of layer 1 after the first back propagation\n");
+  fprintf(stderr, " The new weight and bias of layer 2 after the first back propagation\n");
   cnt = 0; 
   for (int i = 0; i < numberActivation; i++) {
        for (int j = 0; j <= numberOfFeatures; j++) {

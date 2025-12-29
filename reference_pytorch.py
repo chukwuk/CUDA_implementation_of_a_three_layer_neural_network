@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-print(torch.cuda.is_available())
 #x = torch.rand(5, 3)
 #print(x)
 
@@ -34,32 +33,12 @@ model = SimpleNN()
 
 fc1_weights = model.linear1.weight
 fc1_bias = model.linear1.bias
-#output = model.linear1
-#print(output)
 
-
-print("\n")
-print("The output of the weight and bias of linear 1 \n")
-print(fc1_weights)
-print(fc1_bias)
-#print(fc1_bias.shape)
-
-
-print("\n")
-print("The output of the weight and bias of linear 2 \n")
 fc2_weights = model.linear2.weight
 fc2_bias = model.linear2.bias
-print(fc2_weights)
-print(fc2_bias)
 
-
-
-print("\n")
-print("The output of the weight and bias of linear 3 \n")
 fc3_weights = model.linear3.weight
 fc3_bias = model.linear3.bias
-print(fc3_weights)
-print(fc3_bias)
 
 
 # Create a sample input tensor
@@ -78,8 +57,6 @@ with torch.no_grad():
 # Perform forward propagation
 output = model(input_data)
 
-#output.retain_grad()
-print(input_data)
 
 
 # 3. Loss Function and Optimizer
@@ -168,49 +145,22 @@ predictions = (output >= threshold).float()
 #predictions.retain_grad() 
 
 with open("predictiondata.txt", "w") as f:
-    for row_idx in range(predictions.shape[0]):
-        for col_idx in range(predictions.shape[1]):
-            element = predictions[row_idx, col_idx]
+    for row_idx in range(output.shape[0]):
+        for col_idx in range(output.shape[1]):
+            element = output[row_idx, col_idx]
             f.write(f"{element:.4f}  ")
 
         f.write(f"\n")
     f.write(f"\n")
 
 
-
-
 loss = criterion(output, target_data)
-
-print("\n")
-print("fc3.weight before gradient")
-print(model.linear3.weight)
-
-print("\n")
-print("\nfc3.bias before gradient")
-print(model.linear3.bias)
-print("\n")
-
 
 # Backward and optimize
 optimizer.zero_grad()  # Clear previous gradients
 loss.backward()        # Compute gradients
 optimizer.step()       # Update weights
 
-
-for name, param in model.named_parameters():
-    if param.requires_grad:
-        print(f"{name}: {param.data}")
-
-print("\n")
-print("gradient of the output")
-#print(output.grad)
-
-print("Gradients for fc3.weight:")
-print(model.linear3.weight.grad)
-
-print("\nGradients for fc3.bias:")
-print(model.linear3.bias.grad)
-print("\n")
 
 
 with open("weightbias3_after_prop.txt", "w") as f:
@@ -240,13 +190,6 @@ with open("weightbias3_grad.txt", "w") as f:
         f.write(f"\n")
     f.write(f"\n")
 
-print("Gradients for fc2.weight:")
-print(model.linear2.weight.grad)
-
-print("\nGradients for fc2.bias:")
-print(model.linear2.bias.grad)
-
-print("\n")
 
 
 
@@ -277,15 +220,6 @@ with open("weightbias2_grad.txt", "w") as f:
     f.write(f"\n")
 
 
-
-print("Gradients for fc.weight:")
-print(model.linear1.weight.grad)
-
-print("\nGradients for fc.bias:")
-print(model.linear1.bias.grad)
-
-
-
 with open("weightbias_after_prop.txt", "w") as f:
     # Using f-string with fixed-point format specifier and desired precision
     #f.write(f"{value:.4f}\n") 
@@ -312,5 +246,3 @@ with open("weightbias_grad.txt", "w") as f:
         f.write(f"\n")
     f.write(f"\n")
 
-#print(predictions.grad)
-#print(torch.zeros(1).cuda())
