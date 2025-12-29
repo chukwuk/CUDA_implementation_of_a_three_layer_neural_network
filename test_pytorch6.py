@@ -91,7 +91,7 @@ optimizer = optim.Adam(model.parameters(), lr=0.01)
 
 value = 12345.6789
 
-with open("weightbias.txt", "w") as f:
+with open("weightbias1.txt", "w") as f:
     # Using f-string with fixed-point format specifier and desired precision
     #f.write(f"{value:.4f}\n") 
     for row_idx in range(fc1_weights.shape[0]):
@@ -286,7 +286,7 @@ print(model.linear1.bias.grad)
 
 
 
-with open("weightbias_after_prop.txt", "w") as f:
+with open("weightbias1_after_prop.txt", "w") as f:
     # Using f-string with fixed-point format specifier and desired precision
     #f.write(f"{value:.4f}\n") 
     for row_idx in range(model.linear1.weight.shape[0]):
@@ -300,7 +300,7 @@ with open("weightbias_after_prop.txt", "w") as f:
 
 
 
-with open("weightbias_grad.txt", "w") as f:
+with open("weightbias1_grad.txt", "w") as f:
     # Using f-string with fixed-point format specifier and desired precision
     #f.write(f"{value:.4f}\n") 
     for row_idx in range(model.linear1.weight.grad.shape[0]):

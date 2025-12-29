@@ -100,139 +100,22 @@ main( int argc, char* argv[ ] )
   float* weightBiasArray2 = new float[(numberActivation + 1) * numberActivation2];
   float* weightBiasArray3 = new float[(numberActivation2 + 1) * numberActivation3];
   
-
-  FILE *file;
-  char line[256]; // Buffer to store each line
-  char *token;
-
-  
   
   // Reading the Pytorch initial weight and biases for the first layer 
-  file = fopen("weightbias.txt", "r"); // Replace "example.txt" with your file name
-
-  if (file == NULL) {
-     fprintf(stderr, "Error opening file");
-     return 1;
-  }
-  int count = 0;
-  while (fgets(line, sizeof(line), file) != NULL) {
-      // Remove trailing newline character if present
-      line[strcspn(line, "\n")] = 0; 
-      // Split the line by spaces
-      token = strtok(line, " ");
-      while (token != NULL) {
-          float t = atof(token);
-          weightBiasArray[count] = t;
-	  array.push_back(token);
-	  token = strtok(NULL, " ");
-	  count+=1;        
-      } 
-    }
-
-  fclose(file);
-  
+  readfile ("weightbias1.txt", weightBiasArray);
   
   
   // Reading the Pytorch initial weight and biases for the second layer 
-  file = fopen("weightbias2.txt", "r"); // Replace "example.txt" with your file name
-
-  if (file == NULL) {
-     fprintf(stderr, "Error opening file");
-     return 1;
-  }
-  count = 0;
-  while (fgets(line, sizeof(line), file) != NULL) {
-      // Remove trailing newline character if present
-      line[strcspn(line, "\n")] = 0; 
-
-      // Split the line by spaces
-      token = strtok(line, " ");
-      while (token != NULL) {
-          float t = atof(token);
-          weightBiasArray2[count] = t;
-	  token = strtok(NULL, " ");
-	  count+=1;        
-      }
-    }
-
-  fclose(file);
-  
-  
+  readfile ("weightbias2.txt", weightBiasArray2);
     
   // Reading the Pytorch initial weight and biases for the third layer 
-  file = fopen("weightbias3.txt", "r"); // Replace "example.txt" with your file name
-
-  if (file == NULL) {
-     fprintf(stderr, "Error opening file");
-     return 1;
-  }
-  count = 0;
-  while (fgets(line, sizeof(line), file) != NULL) {
-      // Remove trailing newline character if present
-      line[strcspn(line, "\n")] = 0; 
-      // Split the line by spaces
-      token = strtok(line, " ");
-      while (token != NULL) {
-          //fprintf(stderr, "%s ", token);
-          float t = atof(token);
-          weightBiasArray3[count] = t;
-	  token = strtok(NULL, " ");
-	  count+=1;        
-      }
-    }
-
-  fclose(file);
-   
+  readfile ("weightbias3.txt", weightBiasArray3);
+  
   // Reading the input data 
-  file = fopen("inputdata.txt", "r"); // Replace "example.txt" with your file name
-
-  if (file == NULL) {
-     fprintf(stderr, "Error opening file");
-     return 1;
-  }
-  count = 0;
-  while (fgets(line, sizeof(line), file) != NULL) {
-      // Remove trailing newline character if present
-      line[strcspn(line, "\n")] = 0; 
-
-      // Split the line by spaces
-      token = strtok(line, " ");
-      while (token != NULL) {
-          float t = atof(token);
-          xxData[count] = t;
-	  token = strtok(NULL, " ");
-	  count+=1;        
-      }
-    }
-
-  fclose(file);
-  
-  
+   readfile ("inputdata.txt", xxData);
+ 
   // Reading the target data 
-  file = fopen("targetdata.txt", "r"); 
-
-  if (file == NULL) {
-     fprintf(stderr, "Error opening file");
-     return 1;
-  }
-  count = 0;
-  while (fgets(line, sizeof(line), file) != NULL) {
-      // Remove trailing newline character if present
-      line[strcspn(line, "\n")] = 0; 
-      // Split the line by spaces
-      token = strtok(line, " ");
-      while (token != NULL) {
-          //fprintf(stderr, "%s ", token);
-          float t = atof(token);
-          yData[count] = t;
-	  token = strtok(NULL, " ");
-	  count+=1;        
-      }
-    }
-
-  fclose(file);
-
-
+  readfile ("targetdata.txt", yData);
 
   // Allocate memory on device
   float *xxDataDev;
@@ -519,7 +402,7 @@ main( int argc, char* argv[ ] )
   // reading pytorch output data
   // Reading the target data 
   float *HactValues3Pytorch = new float[numberActivation3  * numData]; 
-  readfile("predictiondata.txt", HactValues3Pytorch);
+  readfile("outputdata.txt", HactValues3Pytorch);
   fprintf(stderr, "Checking sigmoid output (prediction) match between Pytorch and CUDA implementation: "); 
   bool outputMatch = true;
   for (int i = 0; i < numData; i++) {
@@ -527,7 +410,6 @@ main( int argc, char* argv[ ] )
 	float torchval = HactValues3Pytorch[IDX2C(i,j,numberActivation3)];
         float cudaval = HactValues3[IDX2C(i,j,numberActivation3)];
         if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
-           fprintf(stderr, "Ouput values does not match\n");
 	   outputMatch = false;
 	   break;
 	}
@@ -911,7 +793,7 @@ main( int argc, char* argv[ ] )
   readfile("weightbias3_after_prop.txt", weightBiasArray3Pytorch);
   
   fprintf(stderr, " \n");
-  fprintf(stderr, "Checking Pytorch weight and bias match the CUDA implementation after the first back propagation: ");
+  fprintf(stderr, "Checking Pytorch layer 3 weight/bias match the CUDA implementation after the first back propagation: ");
   bool weightBiasArray3Match = true;
   for (int i = 0; i < numberActivation3; i++) {
        for (int j = 0; j <= numberActivation2; j++) {
@@ -1156,20 +1038,30 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status, " cudaMemcpy(dL_dW2, dL_dW2_Dev,  dL_dW2_size, cudaMemcpyDeviceToHost);" ); 
 
-  
+    
+  // Reading the dL_dW2 data
+  float* dL_dW2_Pytorch = new float [numberActivation2 * (numberActivation+1)];
+  // reading pytorch dL_dW3 data
+  readfile("weightbias2_grad.txt", dL_dW2_Pytorch);
+  bool dL_dW2_Match = true;
   fprintf(stderr, " \n");
- 
-  fprintf(stderr, " Output of the dL_dW2 \n");
-
+  fprintf(stderr, "Checking dL_dW2 match between Pytorch and CUDA implementation: "); 
   for (int i = 0; i < numberActivation2; i++) {
       for (int j = 0; j <= numberActivation; j++) {
-       fprintf(stderr,"%f ", dL_dW2[IDX2C(i,j,(numberActivation+1))]);
-      }
-     fprintf(stderr, " \n");
-  }
-  
-  fprintf(stderr, " \n");
+       float torchval = dL_dW2_Pytorch[IDX2C(i,j,(numberActivation + 1))];
+       float cudaval = dL_dW2[IDX2C(i,j,(numberActivation + 1))];
+       if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
+           dL_dW2_Match =  false;
+	   break;
+	}
 
+      }
+  }   
+  if (dL_dW2_Match) {
+     fprintf(stderr, "Yes, they match\n"); 
+  } else {
+     fprintf(stderr, "No, they do not match\n"); 
+  }
   
    // transpose weightBiasArray2
       
@@ -1204,24 +1096,6 @@ main( int argc, char* argv[ ] )
   cudaMemcpy(weightBiasArray2_T, weightBiasArrayDev2_T, weightBiasArraySize2_T, cudaMemcpyDeviceToHost);  
   // checks for cuda errors
   checkCudaErrors( status, " cudaMemcpy(weightBiasArray2_T, weightBiasArrayDev2_T, weightBiasArraySize2_T, cudaMemcpyDeviceToHost)  ");
-  
-  
-  fprintf(stderr, " \n");
-  fprintf(stderr, " The output of the Transpose of weight bias array 2\n");
-  int cnt = 0; 
-  for (int i = 0; i < numberActivation; i++) {
-       for (int j = 0; j < numberActivation2; j++) {
-          fprintf(stderr, "%.4f ", weightBiasArray2_T[cnt]);
-	  cnt+=1;
-       }
-
-      fprintf(stderr, " \n");
-  }
-  
-  fprintf(stderr, " \n");
-
-
-
 
   
   // updating W2 with adam optimizer 
@@ -1295,20 +1169,31 @@ main( int argc, char* argv[ ] )
   checkCudaErrors( status," status = cudaMemcpy(vt, vt_Dev, dL_dW3_size, cudaMemcpyDeviceToHost );");
   
     
-  fprintf(stderr, " \n");
-  fprintf(stderr, " The new weight and bias of layer 2 after the first back propagation\n");
-  cnt = 0; 
-  for (int i = 0; i < numberActivation2; i++) {
-       for (int j = 0; j <= numberActivation; j++) {
-          fprintf(stderr, "%.4f ", weightBiasArray2[cnt]);
-	  cnt+=1;
-       }
-
-      fprintf(stderr, " \n");
-  }
+  
+  // reading pytorch W2 data after first backpropagation
+  float* weightBiasArray2Pytorch = new float [numberActivation2 * (numberActivation+1)];
+  readfile("weightbias2_after_prop.txt", weightBiasArray2Pytorch);
   
   fprintf(stderr, " \n");
+  fprintf(stderr, "Checking Pytorch layer 2 weight/bias match the CUDA implementation after the first back propagation: ");
+  bool weightBiasArray2Match = true;
+  
+  for (int i = 0; i < numberActivation2; i++) {
+     for (int j = 0; j <= numberActivation; j++) {
+         float torchval = weightBiasArray2Pytorch[IDX2C(i,j,(numberActivation + 1))];
+         float cudaval = weightBiasArray2[IDX2C(i,j,(numberActivation + 1))];
+         if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
+           weightBiasArray2Match =  false;
+	   break;
+         }
+     }
 
+  } 
+  if (weightBiasArray2Match) {
+     fprintf(stderr, "Yes, they match\n"); 
+  } else {
+     fprintf(stderr, "No, they do not match\n"); 
+  }
 
   
   // calculation of dL_dZ
@@ -1458,22 +1343,29 @@ main( int argc, char* argv[ ] )
 
   
   
-  
-
+  // Reading the dL_dW3 data
+  float* dL_dW_Pytorch = new float [numberActivation * (numberOfFeatures+1)];
+  // reading pytorch dL_dW3 data
+  readfile("weightbias1_grad.txt", dL_dW_Pytorch);
+  bool dL_dW_Match = true;
   fprintf(stderr, " \n");
- 
-  fprintf(stderr, " Output of the dL_dW \n");
-
+  fprintf(stderr, "Checking dL_dW1 match between Pytorch and CUDA implementation: ");  
   for (int i = 0; i < numberActivation; i++) {
-      for (int j = 0; j <= numberOfFeatures; j++) {
-       fprintf(stderr,"%f ", dL_dW[IDX2C(i,j,(numberOfFeatures+1))]);
-      }
-     fprintf(stderr, " \n");
+     for (int j = 0; j <= numberOfFeatures; j++) {
+       float torchval = dL_dW_Pytorch[IDX2C(i,j,(numberOfFeatures + 1))];
+       float cudaval = dL_dW[IDX2C(i,j,(numberOfFeatures + 1))];
+       if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
+           dL_dW_Match =  false;
+	   break;
+       }	      
+     }
   }
   
-  fprintf(stderr, " \n");
-
-  
+  if (dL_dW_Match) {
+     fprintf(stderr, "Yes, they match\n"); 
+  } else {
+     fprintf(stderr, "No, they do not match\n"); 
+  }
   
   // updating W2 with adam optimizer 
   
@@ -1545,20 +1437,30 @@ main( int argc, char* argv[ ] )
   // checks for cuda errors
   checkCudaErrors( status," status = cudaMemcpy(vt, vt_Dev, dL_dW3_size, cudaMemcpyDeviceToHost );");
   
-    
+  
+  // reading pytorch W1 data after first backpropagation
+  float* weightBiasArrayPytorch = new float [numberActivation * (numberOfFeatures + 1)];
+  readfile("weightbias1_after_prop.txt", weightBiasArrayPytorch);
   fprintf(stderr, " \n");
-  fprintf(stderr, " The new weight and bias of layer 1 after the first back propagation\n");
-  cnt = 0; 
+  fprintf(stderr, "Checking Pytorch layer 1 weight/bias match the CUDA implementation after the first back propagation: ");
+  bool weightBiasArrayMatch = true;  
   for (int i = 0; i < numberActivation; i++) {
        for (int j = 0; j <= numberOfFeatures; j++) {
-          fprintf(stderr, "%.4f ", weightBiasArray[cnt]);
-	  cnt+=1;
+         float torchval = weightBiasArrayPytorch[IDX2C(i,j,(numberOfFeatures + 1))];
+         float cudaval = weightBiasArray[IDX2C(i,j,(numberOfFeatures + 1))];
+         if ( (powf(torchval  - cudaval , 2.0)) > powf(0.01, 2.0) )  {
+           weightBiasArray2Match =  false;
+	   break;
+         }
        }
-
-      fprintf(stderr, " \n");
   }
   
-  fprintf(stderr, " \n");
+   
+  if (weightBiasArrayMatch) {
+     fprintf(stderr, "Yes, they match\n"); 
+  } else {
+     fprintf(stderr, "No, they do not match\n"); 
+  }
 
 
 
