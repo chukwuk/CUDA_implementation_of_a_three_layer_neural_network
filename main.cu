@@ -69,12 +69,28 @@ main( int argc, char* argv[ ] )
 //  fprintf (stderr, "Amount of data transfered to the device is %lld GB\n", bytes4euc/1000000000);
   
   vector<char*> array;
-  int numberActivation = 5;
-  int numberActivation2 = 3;
-  int numberActivation3 = 1;
-  int numberOfFeatures = 10;
-  int numData = 2;   
-   
+  
+
+  int numberActivation;
+  int numberActivation2;
+  int numberActivation3;
+  int numberOfFeatures;
+  int numData;   
+
+
+  if (argc > 5) {	  
+      numData = atoi(argv[1]);   
+      numberOfFeatures = atoi(argv[2]);   
+      numberActivation = atoi(argv[3]);  
+      numberActivation2 = atoi(argv[4]);  
+      numberActivation3 = atoi(argv[5]);  
+  } else {
+      numberActivation = 5;
+      numberActivation2 = 3;
+      numberActivation3 = 1;
+      numberOfFeatures = 10;
+      numData = 2;   
+  } 
   int wRows = numberActivation;
   int xCols = numData;
   int wColsXRows = numberOfFeatures;
@@ -90,7 +106,7 @@ main( int argc, char* argv[ ] )
   float* xxData = new float[numData * numberOfFeatures];
   
   for (int i = 0; i < (numData * numberOfFeatures); i++) {
-      xxData[i] = (rand() % 8)/1.0; 
+ //     xxData[i] = (rand() % 8)/1.0; 
   }
   
  
