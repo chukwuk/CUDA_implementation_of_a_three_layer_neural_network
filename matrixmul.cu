@@ -153,6 +153,16 @@ __global__  void matrixMulAddRowBasedARR2(float* weightBias, float* xData,  floa
 }
 
 
+__global__  void matrixKaimingUniformInitilization(float* weightBias, int actLength, int inputFeatures) {
+     
+    int gid =  blockIdx.x *  blockDim.x +  threadIdx.x;
+
+    if (gid < actLength) {
+       weightBias[gid] = 1/(1 + exp(-weightBias[gid]));
+    }
+}
+
+
 
 __global__  void matrixReLu(float* activation, int actLength) {
      

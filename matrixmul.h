@@ -4,6 +4,8 @@
 #define __MATRIXMUL_H
 
 
+__global__  void matrixKaimingUniformInitilization(float* activation, int actLength, int inputFeatures);
+
 __global__  void matrixMulAddColBasedARR(float* weightBias, float* xData,  float* activationValues, int wRows, int xCols, int wColsXRows);
 
 __global__  void matrixMulAddRowBasedARR(float* weightBias, float* xData,  float* activationValues, int wRows, int xCols, int wColsXRows);

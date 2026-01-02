@@ -372,7 +372,7 @@ main( int argc, char* argv[ ] )
     
   
   // call the kernel
-  matrixMulAddRowBasedARR2<<< grid, threads >>>( weightBiasArrayDev3, actValuesDev2, actValuesDev3, numberActivation3, numData, numberActivation2);
+  matrixMulAddRowBasedARR<<< grid, threads >>>( weightBiasArrayDev3, actValuesDev2, actValuesDev3, numberActivation3, numData, numberActivation2);
   
   status = cudaDeviceSynchronize( );
   
@@ -502,7 +502,7 @@ main( int argc, char* argv[ ] )
   
   
   
-  // Transpose of dL_dZ2 so it can be arranged in column major storage for matrix multiplication
+  // Transpose of dL_dZ3 so it can be arranged in column major storage for matrix multiplication
 
   
   
